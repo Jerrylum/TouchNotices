@@ -35,16 +35,14 @@ public class NoticesCMD implements CommandExecutor {
 			"/Notice ¡±7reload","/Notice reload",I18n.t("Notices.reload")};
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-		if((sender.isOp() && sender instanceof Player) == false){
+		if(sender.isOp() == false){
 			return false;
 		}
-		
-		Player p = (Player)sender;
-		
+
 		if(args.length >=1 && args.length <= 2 && args[0].equalsIgnoreCase("list")){
 			List<Notice> list = NoticeUtil.getNotices();
 			if(list.isEmpty()){
-				p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.nolist"));
+				sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.nolist"));
 				return true;
 			}
 			
@@ -53,11 +51,11 @@ public class NoticesCMD implements CommandExecutor {
 				try{
 					k = Integer.parseInt(args[1]);
 					if( (k-1) * 10 >= list.size()){
-						p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.nopages") + k);
+						sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.nopages") + k);
 						return true;
 					}
 				}catch(Exception ex){
-					p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
+					sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
 					return true;
 				}
 			}
@@ -66,16 +64,25 @@ public class NoticesCMD implements CommandExecutor {
 			int max = k*10;
 			String str;
 			
-			p.sendMessage("¡±3Notice> ¡±f" + I18n.t("Notices.list"));
-			for(int i = mix; i < max && i < list.size(); i ++){
-				str = list.get(i).getRawMessage();
-				Util.sendAction("{\"text\":\"" + (i+1) + ". " + str + "\","
-						+ "\"clickEvent\":"
-						+ "{\"action\":\"suggest_command\",\"value\":\"/Notice remove " + i +1 + "\"},"
-						+ "\"hoverEvent\":"
-						+ "{\"action\":\"show_text\",\"value\":\"" + I18n.t("Notices.delete") + "\"}}",Arrays.asList(p));
+			sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("Notices.list"));
+			if(sender instanceof Player){
+				Player p = (Player)sender;
+				for(int i = mix; i < max && i < list.size(); i ++){
+					str = list.get(i).getRawMessage();
+					Util.sendAction("{\"text\":\"" + (i+1) + ". " + str + "\","
+							+ "\"clickEvent\":"
+							+ "{\"action\":\"suggest_command\",\"value\":\"/Notice remove " + i +1 + "\"},"
+							+ "\"hoverEvent\":"
+							+ "{\"action\":\"show_text\",\"value\":\"" + I18n.t("Notices.delete") + "\"}}",Arrays.asList(p));
+				}
+			}else{
+				for(int i = mix; i < max && i < list.size(); i ++){
+					str = list.get(i).getRawMessage();
+					sender.sendMessage((i + 1) + ". " + str);
+				}
 			}
-			p.sendMessage("¡±7²Ä" + k + "/" + ( ((int)(list.size() / 10)) + 1) + "­¶");
+			
+			sender.sendMessage("¡±7²Ä" + k + "/" + ( ((int)(list.size() / 10)) + 1) + "­¶");
 			return true;
 		}
 		
@@ -85,43 +92,43 @@ public class NoticesCMD implements CommandExecutor {
 				try{
 					id = Integer.parseInt(args[1]);
 				}catch(Exception ex){
-					p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
+					sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
 					return true;
 				}
 				
 				List<Notice> list = NoticeUtil.getNotices();
 				if(list.size() < id || id <= 0){
-					p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.noindex") + id);
+					sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.noindex") + id);
 					return true;
 				}
 				
 				NoticeUtil.delNotice(list.get(id-1));
-				p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.delete"));
+				sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.delete"));
 				return true;
 			}else if(args[0].equalsIgnoreCase("delay")){
 				int id;
 				try{
 					id = Integer.parseInt(args[1]);
 				}catch(Exception ex){
-					p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
+					sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
 					return true;
 				}
 				
 				NoticeUtil.setDelay(id);
-				p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.set"));
+				sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.set"));
 				return true;
 			}else if(args[0].equalsIgnoreCase("broadcast")){
 				int id;
 				try{
 					id = Integer.parseInt(args[1]);
 				}catch(Exception ex){
-					p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
+					sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
 					return true;
 				}
 				
 				List<Notice> list = NoticeUtil.getNotices();
 				if(list.size() < id || id <= 0){
-					p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.noindex") + id);
+					sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.noindex") + id);
 					return true;
 				}
 
@@ -142,12 +149,12 @@ public class NoticesCMD implements CommandExecutor {
 						throw new Exception();
 					}
 				}catch(Exception ex){
-					p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
+					sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
 					return true;
 				}
 				
 				NoticeUtil.addNotice(str);
-				p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.add"));
+				sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.add"));
 				return true;
 			}else if(args[0].equalsIgnoreCase("say")){
 				try{
@@ -155,7 +162,7 @@ public class NoticesCMD implements CommandExecutor {
 						throw new Exception();
 					}
 				}catch(Exception ex){
-					p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
+					sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.wrong"));
 					return true;
 				}
 				
@@ -168,18 +175,26 @@ public class NoticesCMD implements CommandExecutor {
 			NoticeApi.unloadAll();
 			Main.Plugin().reloadConfig();
 			NoticeUtil.run(Main.Config());
-			p.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.reload"));
+			sender.sendMessage("¡±3Notice> ¡±f" + I18n.t("CMD.reload"));
 			return true;
 		}
 		
-		p.sendMessage("¡±3Notice> ¡±fHelp");
-		for(int i = 0; i + 2 < helplist.length; i = i +3){
-			Util.sendAction("{\"text\":\"" + helplist[i] + "\","
-					+ "\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"" + helplist[i+1] + "\"},"
-					+ "\"hoverEvent\":{\"action\":\"show_text\",\"value\":\""
-						+ helplist[i+2]
-						+ "\n"+ I18n.t("Notices.click")
-					+ "\"}}", Arrays.asList(p));
+		sender.sendMessage("¡±3Notice> ¡±fHelp");
+		if(sender instanceof Player){
+			Player p = (Player)sender;
+			
+			for(int i = 0; i + 2 < helplist.length; i = i +3){
+				Util.sendAction("{\"text\":\"" + helplist[i] + "\","
+						+ "\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"" + helplist[i+1] + "\"},"
+						+ "\"hoverEvent\":{\"action\":\"show_text\",\"value\":\""
+							+ helplist[i+2]
+							+ "\n"+ I18n.t("Notices.click")
+						+ "\"}}", Arrays.asList(p));
+			}
+		}else{
+			for(int i = 0; i + 2 < helplist.length; i = i +3){
+				sender.sendMessage(helplist[i] + "¡±f - " + helplist[i + 2]);
+			}
 		}
 		return true;
 	}
