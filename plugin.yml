@@ -1,0 +1,9 @@
+name: TouchNotices
+main: io.Jerry.TouchNotices.Main
+author: Jerry
+version: 1.0.0
+description: TouchNotices is a notices plugin and api.
+commands:
+    Notice:
+      description: Utilize the plugin
+      usage: Command> You don't have permission
