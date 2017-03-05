@@ -7,8 +7,8 @@ public class I18n {
 	private static ResourceBundle res;
 	
 	public static void run(){
-		//res = ResourceBundle.getBundle("messages", Locale.getDefault());
-		res = ResourceBundle.getBundle("messages", new Locale("en", "US"));
+		res = ResourceBundle.getBundle("messages", Locale.getDefault());
+		//res = ResourceBundle.getBundle("messages", new Locale("en", "US"));
 	}
 	
 	public static String t(String str){
